@@ -1,14 +1,28 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useCloseModalClickOutside from "../../hooks/closeModal";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const [placeBet, setPlaceBet] = useState(false);
+  const [headsTailTab, setHeadsTailTab] = useState("heads");
   const myBetRef = useRef();
   const navigate = useNavigate();
   const [myBet, setMyBet] = useState(false);
   useCloseModalClickOutside(myBetRef, () => {
     setMyBet(false);
   });
+
+  useEffect(() => {
+    if (placeBet) {
+      const interval = setInterval(() => {
+        setPlaceBet(false);
+      }, 1000);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [placeBet]);
   return (
     <div
       style={{ backgroundColor: "#0a0928" }}
@@ -319,143 +333,181 @@ const Home = () => {
               </div>
               <div className="absolute flex items-end pb-8 animate__animated animate__bounceInDown justify-center top-0 left-0 w-full h-full">
                 {/*  coinContainer*/}
-                <div className="coinContainer  ">
-                  <div className="text-yellow-200 coin" style={{}}>
-                    <span
-                      className="absolute w-full h-full p-2 bg-yellow-400 border-2 border-yellow-200 rounded-full"
-                      style={{ transform: "translateZ(0px)", zIndex: 990 }}
+
+                {placeBet ? (
+                  <div className="coinContainer toss_coin">
+                    <div
+                      className="text-yellow-200 coin"
+                      style={{
+                        animation:
+                          "0.6s ease 0s 1 normal none running coinFlipAnimation",
+                      }}
                     >
-                      <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip ">
-                        H<span />
+                      <span
+                        className="absolute w-full h-full p-2 bg-yellow-400 border-2 border-yellow-200 rounded-full"
+                        style={{ transform: "translateZ(8px)", zIndex: 1000 }}
+                      >
+                        <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip">
+                          H<span className="shimmer" />
+                        </span>
                       </span>
-                    </span>
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(1px)", zIndex: 1000 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(2px)", zIndex: 999 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(3px)", zIndex: 998 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(4px)", zIndex: 997 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(5px)", zIndex: 996 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(6px)", zIndex: 995 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(7px)", zIndex: 994 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(8px)", zIndex: 993 }}
-                    />
-                    <span
-                      className="absolute flex items-center justify-center w-full h-full p-2 bg-yellow-400 border-2 border-yellow-200 rounded-full"
-                      style={{ transform: "translateZ(8px)", zIndex: 1000 }}
-                    >
-                      <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip">
-                        T<span className="shimmer" />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(1px)", zIndex: 1000 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(2px)", zIndex: 999 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(3px)", zIndex: 998 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(4px)", zIndex: 997 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(5px)", zIndex: 996 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(6px)", zIndex: 995 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(7px)", zIndex: 994 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(8px)", zIndex: 993 }}
+                      />
+                      <span
+                        className="absolute flex items-center justify-center w-full h-full p-2 bg-yellow-400 border-2 border-yellow-200 rounded-full"
+                        style={{ transform: "translateZ(0px)", zIndex: 990 }}
+                      >
+                        <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip">
+                          T<span className />
+                        </span>
                       </span>
-                    </span>
+                    </div>
                   </div>
-                </div>
-                <div className="coinContainer toss_coin">
-                  <div
-                    className="text-yellow-200 coin"
-                    style={{
-                      animation:
-                        "0.6s ease 0s 1 normal none running coinFlipAnimation",
-                    }}
-                  >
-                    <span
-                      className="absolute w-full h-full p-2 bg-yellow-400 border-2 border-yellow-200 rounded-full"
-                      style={{ transform: "translateZ(8px)", zIndex: 1000 }}
-                    >
-                      <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip">
-                        H<span className="shimmer" />
+                ) : (
+                  <div className="coinContainer  ">
+                    <div className="text-yellow-200 coin">
+                      <span
+                        className="absolute w-full h-full p-2 bg-yellow-400 border-2 border-yellow-200 rounded-full"
+                        style={{ transform: "translateZ(0px)", zIndex: 990 }}
+                      >
+                        <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip ">
+                          {headsTailTab === "heads" ? "H" : "H"}
+                          <span />
+                        </span>
                       </span>
-                    </span>
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(1px)", zIndex: 1000 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(2px)", zIndex: 999 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(3px)", zIndex: 998 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(4px)", zIndex: 997 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(5px)", zIndex: 996 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(6px)", zIndex: 995 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(7px)", zIndex: 994 }}
-                    />
-                    <span
-                      className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
-                      style={{ transform: "translateZ(8px)", zIndex: 993 }}
-                    />
-                    <span
-                      className="absolute flex items-center justify-center w-full h-full p-2 bg-yellow-400 border-2 border-yellow-200 rounded-full"
-                      style={{ transform: "translateZ(0px)", zIndex: 990 }}
-                    >
-                      <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip">
-                        T<span className />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(1px)", zIndex: 1000 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(2px)", zIndex: 999 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(3px)", zIndex: 998 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(4px)", zIndex: 997 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(5px)", zIndex: 996 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(6px)", zIndex: 995 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(7px)", zIndex: 994 }}
+                      />
+                      <span
+                        className="absolute w-full h-full bg-yellow-500 border-2 border-yellow-400 border-dashed rounded-full"
+                        style={{ transform: "translateZ(8px)", zIndex: 993 }}
+                      />
+                      <span
+                        className="absolute flex items-center justify-center w-full h-full p-2 bg-yellow-400 border-2 border-yellow-200 rounded-full"
+                        style={{ transform: "translateZ(8px)", zIndex: 1000 }}
+                      >
+                        <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip">
+                          {headsTailTab === "heads" ? "H" : "T"}
+                          <span className="shimmer" />
+                        </span>
                       </span>
-                    </span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <div
                 id="step-selectOption"
                 className="absolute bottom-0 z-50 flex items-center w-full gap-1 p-1 font-semibold h-fit backdrop-blur-md bg-black/40"
               >
-                <div className="flex relative items-center border-2 justify-center flex-grow px-3 py-2 rounded-md active:scale-90 autoAnimate bg-orange-600 border-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={24}
-                    height={24}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="absolute w-6 h-6 left-2"
-                  >
-                    <path
-                      d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z"
-                      fill="currentColor"
-                      strokeWidth={0}
-                    />
-                  </svg>
+                <div
+                  onClick={() => setHeadsTailTab("heads")}
+                  className={`flex relative items-center  justify-center flex-grow px-3 py-2 rounded-md active:scale-90 autoAnimate bg-orange-600 ${
+                    headsTailTab === "heads" ? "border-white border-2" : ""
+                  }`}
+                >
+                  {headsTailTab === "heads" && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="absolute w-6 h-6 left-2"
+                    >
+                      <path
+                        d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z"
+                        fill="currentColor"
+                        strokeWidth={0}
+                      />
+                    </svg>
+                  )}
                   HEADS
                 </div>
-                <div className="flex relative items-center border-2 justify-center flex-grow px-3 py-2 rounded-md active:scale-90 autoAnimate bg-blue-600 border-blue-600">
+                <div
+                  onClick={() => setHeadsTailTab("tails")}
+                  className={`flex relative items-center justify-center flex-grow px-3 py-2 rounded-md active:scale-90 autoAnimate bg-blue-600 border-blue-600 ${
+                    headsTailTab === "tails" ? "border-white border-2" : ""
+                  }`}
+                >
+                  {headsTailTab === "tails" && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="absolute w-6 h-6 left-2"
+                    >
+                      <path
+                        d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z"
+                        fill="currentColor"
+                        strokeWidth={0}
+                      />
+                    </svg>
+                  )}
                   TAILS
                 </div>
               </div>
@@ -531,7 +583,10 @@ const Home = () => {
               id="step-placeBet"
               className="flex flex-col w-full h-12 px-3 relative"
             >
-              <button className="w-full btn-originals animate__animated animate__headShake btn-green relative overflow-hidden">
+              <button
+                onClick={() => setPlaceBet(true)}
+                className="w-full btn-originals animate__animated animate__headShake btn-green relative overflow-hidden"
+              >
                 Bet
               </button>
             </div>
