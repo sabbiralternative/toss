@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import useCloseModalClickOutside from "../../hooks/closeModal";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Home = () => {
+  const [amount, setAmount] = useState(0);
   const [placeBet, setPlaceBet] = useState(false);
   const [headsTailTab, setHeadsTailTab] = useState("heads");
   const myBetRef = useRef();
@@ -23,6 +25,31 @@ const Home = () => {
       };
     }
   }, [placeBet]);
+
+  const handleDecreaseAmount = () => {
+    const decreaseAmount = amount / 2;
+    if (decreaseAmount < 50) {
+      return toast.error("Minimum amount is 50");
+    } else {
+      setAmount(amount / 2);
+    }
+  };
+  const handleIncreaseAmount = () => {
+    const decreaseAmount = amount * 2;
+    if (decreaseAmount > 10000) {
+      return toast.error("Maximum amount is 10000");
+    } else {
+      setAmount(amount * 2);
+    }
+  };
+
+  const handlePlaceBet = () => {
+    if (!amount) {
+      toast.error("Amount is required");
+    } else {
+      setPlaceBet(true);
+    }
+  };
   return (
     <div
       style={{ backgroundColor: "#0a0928" }}
@@ -534,15 +561,20 @@ const Home = () => {
                     placeholder="Amount"
                     className="z-40 text-center input-originals"
                     type="text"
-                    defaultValue={50}
+                    value={amount ? amount : null}
                   />
                   <button
+                    disabled={!amount}
+                    onClick={handleDecreaseAmount}
                     className="btn-pill animate__animated animate__fadeIn w-fit opacity-20 cursor-not-allowed cursor-not-allowed flex items-center justify-center p-3 transition-all ease-in-out active:scale-75"
-                    disabled
                   >
                     /2
                   </button>
-                  <button className="btn-pill animate__animated animate__fadeIn w-fit opacity-100 cursor-pointer flex items-center justify-center p-3 transition-all ease-in-out active:scale-75">
+                  <button
+                    disabled={!amount}
+                    onClick={handleIncreaseAmount}
+                    className="btn-pill animate__animated animate__fadeIn w-fit opacity-100 cursor-pointer flex items-center justify-center p-3 transition-all ease-in-out active:scale-75"
+                  >
                     x2
                   </button>
                 </div>
@@ -553,24 +585,28 @@ const Home = () => {
               <div className="w-full px-3 h-fit">
                 <div className="grid grid-cols-4 gap-1">
                   <button
+                    onClick={() => setAmount(50)}
                     value={50}
                     className="btn-pill animate__animated animate__fadeIn"
                   >
                     50
                   </button>
                   <button
+                    onClick={() => setAmount(250)}
                     value={250}
                     className="btn-pill animate__animated animate__fadeIn"
                   >
                     250
                   </button>
                   <button
+                    onClick={() => setAmount(1250)}
                     value={1250}
                     className="btn-pill animate__animated animate__fadeIn"
                   >
                     1250
                   </button>
                   <button
+                    onClick={() => setAmount(2500)}
                     value={2500}
                     className="btn-pill animate__animated animate__fadeIn"
                   >
@@ -584,7 +620,7 @@ const Home = () => {
               className="flex flex-col w-full h-12 px-3 relative"
             >
               <button
-                onClick={() => setPlaceBet(true)}
+                onClick={handlePlaceBet}
                 className="w-full btn-originals animate__animated animate__headShake btn-green relative overflow-hidden"
               >
                 Bet
