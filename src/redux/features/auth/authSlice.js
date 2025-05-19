@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   token: null,
-  user: null,
+  username: null,
+  balance: null,
 };
 
 export const authSlice = createSlice({
@@ -10,14 +11,16 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, { payload }) => {
-      const { token, user } = payload;
+      const { token, username, balance } = payload;
       state.token = token;
-      state.user = user;
+      state.username = username;
+      state.balance = balance;
     },
     logout: (state) => {
       localStorage.clear();
       state.token = null;
-      state.user = null;
+      state.username = null;
+      state.balance = null;
     },
   },
 });

@@ -47,6 +47,7 @@
     },
 
     "endpoint": {
+      "auth": "https://api7.live/api/funbar/auth.php",
       "eventDetails": "https://cache7.live/api/exchange/encrypted/odds/event",
       "login": "https://api7.live/api/account/diamond/login",
       "inPlayAndPopularEvents": "https://api7.live/api/exchange/odds/inPlayAndPopularEvents",
@@ -56,7 +57,7 @@
       "openEvents": "https://cache7.live/api/exchange/diamond/openEvents",
       "stats": "https://cache7.live/api/exchange/diamond/stats.php?id=",
       "odds": "https://cache7.live/api/exchange/diamond/odds/event",
-      "order": "https://api7.live/api/exchange/diamond/order",
+      "order": "https://dream11.dev/api/funbar/order.php",
       "rules": "https://api7.live/api/exchange/diamond/rules",
       "orderCount": "https://api7.live/api/exchange/diamond/order-count.php",
       "accessToken": "https://api7.live/api/exchange/diamond/accessToken",

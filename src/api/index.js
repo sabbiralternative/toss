@@ -56,6 +56,7 @@ export const API = {
   liveCasinoLobby: "",
   banner: "",
   lotusHomeLobby: "",
+  auth: "",
 };
 
 export const Settings = {

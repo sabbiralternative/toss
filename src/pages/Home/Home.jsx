@@ -2,9 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import useCloseModalClickOutside from "../../hooks/closeModal";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useAuth } from "../../hooks/auth";
+import { useSelector } from "react-redux";
+import { useOrderMutation } from "../../redux/features/events/events";
 
 const Home = () => {
-  const [amount, setAmount] = useState(0);
+  const [toss, setToss] = useState(null);
+  const [addOrder] = useOrderMutation();
+  const { token, username, balance } = useSelector((state) => state.auth);
+  const { mutate: handleAuth } = useAuth();
+  const [stake, setStake] = useState(0);
   const [placeBet, setPlaceBet] = useState(false);
   const [headsTailTab, setHeadsTailTab] = useState("heads");
   const myBetRef = useRef();
@@ -14,42 +21,57 @@ const Home = () => {
     setMyBet(false);
   });
 
-  useEffect(() => {
-    if (placeBet) {
-      const interval = setInterval(() => {
-        setPlaceBet(false);
-      }, 1000);
-
-      return () => {
-        clearInterval(interval);
-      };
-    }
-  }, [placeBet]);
-
   const handleDecreaseAmount = () => {
-    const decreaseAmount = amount / 2;
+    const decreaseAmount = stake / 2;
     if (decreaseAmount < 50) {
       return toast.error("Minimum amount is 50");
     } else {
-      setAmount(amount / 2);
+      setStake(stake / 2);
     }
   };
   const handleIncreaseAmount = () => {
-    const decreaseAmount = amount * 2;
+    const decreaseAmount = stake * 2;
     if (decreaseAmount > 10000) {
       return toast.error("Maximum amount is 10000");
     } else {
-      setAmount(amount * 2);
+      setStake(stake * 2);
     }
   };
 
-  const handlePlaceBet = () => {
-    if (!amount) {
-      toast.error("Amount is required");
-    } else {
+  const handlePlaceBet = async () => {
+    if (stake) {
       setPlaceBet(true);
+      const payload = [
+        {
+          eventId: 20001,
+          eventName: "Coin Toss",
+          isback: 0,
+          price: 1.98,
+          runner_name: "H",
+          stake,
+        },
+      ];
+      const res = await addOrder(payload).unwrap();
+
+      if (res?.success) {
+        setToss(res?.toss);
+        setTimeout(() => {
+          setPlaceBet(false);
+        }, 500);
+      } else {
+        toast.error(res?.error?.status?.[0]?.description);
+      }
+    } else {
+      toast.error("Amount is required");
     }
   };
+
+  useEffect(() => {
+    if (token) {
+      handleAuth();
+    }
+  }, [token, handleAuth]);
+
   return (
     <div
       style={{ backgroundColor: "#0a0928" }}
@@ -102,7 +124,7 @@ const Home = () => {
             <div className="userName-text-container">
               <div id="user" className="w-full">
                 <span id="user-span" className>
-                  b41.91_9967222220
+                  {username}
                 </span>
               </div>
             </div>
@@ -127,7 +149,7 @@ const Home = () => {
               id="balanceAmountContainer"
               className="text-yellow-500 relative w-fit"
             >
-              <span>₹574.00</span>
+              <span>₹{balance}</span>
               <div>
                 <div className="absolute right-0 z-50 text-sm font-semibold text-green-500 animate__animated animate__fadeOutUp animate__slow -bottom-6">
                   +49
@@ -360,8 +382,7 @@ const Home = () => {
               </div>
               <div className="absolute flex items-end pb-8 animate__animated animate__bounceInDown justify-center top-0 left-0 w-full h-full">
                 {/*  coinContainer*/}
-
-                {placeBet ? (
+                {placeBet && (
                   <div className="coinContainer toss_coin">
                     <div
                       className="text-yellow-200 coin"
@@ -420,7 +441,8 @@ const Home = () => {
                       </span>
                     </div>
                   </div>
-                ) : (
+                )}
+                {!placeBet && (
                   <div className="coinContainer  ">
                     <div className="text-yellow-200 coin">
                       <span
@@ -428,7 +450,11 @@ const Home = () => {
                         style={{ transform: "translateZ(0px)", zIndex: 990 }}
                       >
                         <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip ">
-                          {headsTailTab === "heads" ? "H" : "H"}
+                          {/* {toss !== null
+                            ? toss
+                            : headsTailTab === "heads"
+                            ? "H"
+                            : "H"} */}
                           <span />
                         </span>
                       </span>
@@ -469,7 +495,7 @@ const Home = () => {
                         style={{ transform: "translateZ(8px)", zIndex: 1000 }}
                       >
                         <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip">
-                          {headsTailTab === "heads" ? "H" : "T"}
+                          {toss ? toss : headsTailTab === "heads" ? "H" : "T"}
                           <span className="shimmer" />
                         </span>
                       </span>
@@ -482,7 +508,10 @@ const Home = () => {
                 className="absolute bottom-0 z-50 flex items-center w-full gap-1 p-1 font-semibold h-fit backdrop-blur-md bg-black/40"
               >
                 <div
-                  onClick={() => setHeadsTailTab("heads")}
+                  onClick={() => {
+                    setHeadsTailTab("heads");
+                    setToss(null);
+                  }}
                   className={`flex relative items-center  justify-center flex-grow px-3 py-2 rounded-md active:scale-90 autoAnimate bg-orange-600 ${
                     headsTailTab === "heads" ? "border-white border-2" : ""
                   }`}
@@ -510,7 +539,10 @@ const Home = () => {
                   HEADS
                 </div>
                 <div
-                  onClick={() => setHeadsTailTab("tails")}
+                  onClick={() => {
+                    setHeadsTailTab("tails");
+                    setToss(null);
+                  }}
                   className={`flex relative items-center justify-center flex-grow px-3 py-2 rounded-md active:scale-90 autoAnimate bg-blue-600 border-blue-600 ${
                     headsTailTab === "tails" ? "border-white border-2" : ""
                   }`}
@@ -558,20 +590,21 @@ const Home = () => {
                   className="relative flex items-center flex-grow h-12 gap-1"
                 >
                   <input
+                    onChange={(e) => setStake(e.target.value)}
                     placeholder="Amount"
                     className="z-40 text-center input-originals"
-                    type="text"
-                    value={amount ? amount : null}
+                    type="number"
+                    value={stake ? stake : null}
                   />
                   <button
-                    disabled={!amount}
+                    disabled={!stake}
                     onClick={handleDecreaseAmount}
                     className="btn-pill animate__animated animate__fadeIn w-fit opacity-20 cursor-not-allowed cursor-not-allowed flex items-center justify-center p-3 transition-all ease-in-out active:scale-75"
                   >
                     /2
                   </button>
                   <button
-                    disabled={!amount}
+                    disabled={!stake}
                     onClick={handleIncreaseAmount}
                     className="btn-pill animate__animated animate__fadeIn w-fit opacity-100 cursor-pointer flex items-center justify-center p-3 transition-all ease-in-out active:scale-75"
                   >
@@ -585,28 +618,28 @@ const Home = () => {
               <div className="w-full px-3 h-fit">
                 <div className="grid grid-cols-4 gap-1">
                   <button
-                    onClick={() => setAmount(50)}
+                    onClick={() => setStake(50)}
                     value={50}
                     className="btn-pill animate__animated animate__fadeIn"
                   >
                     50
                   </button>
                   <button
-                    onClick={() => setAmount(250)}
+                    onClick={() => setStake(250)}
                     value={250}
                     className="btn-pill animate__animated animate__fadeIn"
                   >
                     250
                   </button>
                   <button
-                    onClick={() => setAmount(1250)}
+                    onClick={() => setStake(1250)}
                     value={1250}
                     className="btn-pill animate__animated animate__fadeIn"
                   >
                     1250
                   </button>
                   <button
-                    onClick={() => setAmount(2500)}
+                    onClick={() => setStake(2500)}
                     value={2500}
                     className="btn-pill animate__animated animate__fadeIn"
                   >
