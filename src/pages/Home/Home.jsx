@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { useOrderMutation } from "../../redux/features/events/events";
 
 const Home = () => {
+  const recentResult = localStorage.getItem("recentResult");
+  const parseRecentResult = recentResult ? JSON.parse(recentResult) : [];
   const [toss, setToss] = useState(null);
   const [addOrder] = useOrderMutation();
   const { token, username, balance } = useSelector((state) => state.auth);
@@ -54,6 +56,17 @@ const Home = () => {
       const res = await addOrder(payload).unwrap();
 
       if (res?.success) {
+        let recentResult = [];
+        const recentStoredResult = localStorage.getItem("recentResult");
+        if (recentStoredResult) {
+          recentResult = JSON.parse(recentStoredResult);
+        }
+
+        if (res?.toss) {
+          recentResult.push(res?.toss);
+        }
+
+        localStorage.setItem("recentResult", JSON.stringify(recentResult));
         setToss(res?.toss);
         setTimeout(() => {
           setPlaceBet(false);
@@ -235,36 +248,16 @@ const Home = () => {
                   <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
                 </svg>
               </span>
-              <span className="px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-50 animate__fadeInLeft bg-green-500">
-                H
-              </span>
-              <span className="px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-50 bg-green-500">
-                H
-              </span>
-              <span className="px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-30 bg-slate-800">
-                T
-              </span>
-              <span className="px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-30 bg-slate-800">
-                T
-              </span>
-              <span className="px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-30 bg-slate-800">
-                T
-              </span>
-              <span className="px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-30 bg-green-500">
-                T
-              </span>
-              <span className="px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-30 bg-slate-800">
-                H
-              </span>
-              <span className="px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-30 bg-green-500">
-                T
-              </span>
-              <span className="px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-30 bg-green-500">
-                H
-              </span>
-              <span className="px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-30 bg-green-500">
-                T
-              </span>
+              {parseRecentResult?.slice(0, 30)?.map((result, i) => (
+                <span
+                  key={i}
+                  className={`px-3 py-[6px] animate__animated rounded-md text-sm text-white font-semibold z-50 animate__fadeInLeft  ${
+                    result === "H" ? "bg-green-500" : "bg-slate-800 "
+                  }`}
+                >
+                  {result}
+                </span>
+              ))}
             </div>
             <div className="absolute top-0 right-0 z-40 flex items-center h-full">
               <span className="w-8 h-full bg-gradient-to-r from-transparent to-gray-900" />
