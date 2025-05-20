@@ -3,10 +3,13 @@ import useCloseModalClickOutside from "../../hooks/closeModal";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/auth";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useOrderMutation } from "../../redux/features/events/events";
+import { playWinSound } from "../../utils/sound";
+import { setBalance } from "../../redux/features/auth/authSlice";
 
 const Home = () => {
+  const dispatch = useDispatch();
   const recentResult = localStorage.getItem("recentResult");
   const parseRecentResult = recentResult ? JSON.parse(recentResult) : [];
   const [toss, setToss] = useState(null);
@@ -15,7 +18,8 @@ const Home = () => {
   const { mutate: handleAuth } = useAuth();
   const [stake, setStake] = useState(0);
   const [placeBet, setPlaceBet] = useState(false);
-  const [headsTailTab, setHeadsTailTab] = useState("heads");
+  const [headsTailTab, setHeadsTailTab] = useState("H");
+  const [totalWin, setTotalWin] = useState(null);
   const myBetRef = useRef();
   const navigate = useNavigate();
   const [myBet, setMyBet] = useState(false);
@@ -40,6 +44,16 @@ const Home = () => {
     }
   };
 
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      if (totalWin) {
+        setTotalWin(null);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeOut);
+  }, [totalWin]);
+
   const handlePlaceBet = async () => {
     if (stake) {
       setPlaceBet(true);
@@ -49,26 +63,38 @@ const Home = () => {
           eventName: "Coin Toss",
           isback: 0,
           price: 1.98,
-          runner_name: "H",
+          runner_name: headsTailTab,
           stake,
         },
       ];
+
       const res = await addOrder(payload).unwrap();
 
       if (res?.success) {
-        let recentResult = [];
-        const recentStoredResult = localStorage.getItem("recentResult");
-        if (recentStoredResult) {
-          recentResult = JSON.parse(recentStoredResult);
-        }
+        const toss = res?.toss;
 
-        if (res?.toss) {
-          recentResult.push(res?.toss);
-        }
-
-        localStorage.setItem("recentResult", JSON.stringify(recentResult));
-        setToss(res?.toss);
         setTimeout(() => {
+          if (toss === headsTailTab) {
+            playWinSound();
+            const winAmount = 1.98 * stake;
+            setTotalWin(winAmount);
+            dispatch(setBalance(winAmount + balance));
+          } else {
+            const lossAmount = balance - stake;
+            dispatch(setBalance(lossAmount));
+          }
+          let recentResult = [];
+          const recentStoredResult = localStorage.getItem("recentResult");
+          if (recentStoredResult) {
+            recentResult = JSON.parse(recentStoredResult);
+          }
+
+          if (toss) {
+            recentResult.push(toss);
+          }
+
+          localStorage.setItem("recentResult", JSON.stringify(recentResult));
+          setToss(toss);
           setPlaceBet(false);
         }, 500);
       } else {
@@ -164,8 +190,14 @@ const Home = () => {
             >
               <span>₹{balance}</span>
               <div>
-                <div className="absolute right-0 z-50 text-sm font-semibold text-green-500 animate__animated animate__fadeOutUp animate__slow -bottom-6">
-                  +49
+                <div
+                  className={`absolute right-0 z-50 text-sm font-semibold text-green-500  -bottom-6 ${
+                    totalWin
+                      ? "animate__animated animate__fadeOutUp animate__slow"
+                      : "animate__animated animate__fadeOutDown animate__slow"
+                  }`}
+                >
+                  {totalWin && `+${totalWin}`}
                 </div>
               </div>
             </div>
@@ -488,7 +520,7 @@ const Home = () => {
                         style={{ transform: "translateZ(8px)", zIndex: 1000 }}
                       >
                         <span className="relative flex items-center justify-center w-full h-full font-black border-4 border-yellow-200 border-double rounded-full text-7xl overflow-clip">
-                          {toss ? toss : headsTailTab === "heads" ? "H" : "T"}
+                          {toss ? toss : headsTailTab === "H" ? "H" : "T"}
                           <span className="shimmer" />
                         </span>
                       </span>
@@ -502,14 +534,14 @@ const Home = () => {
               >
                 <div
                   onClick={() => {
-                    setHeadsTailTab("heads");
+                    setHeadsTailTab("H");
                     setToss(null);
                   }}
                   className={`flex relative items-center  justify-center flex-grow px-3 py-2 rounded-md active:scale-90 autoAnimate bg-orange-600 ${
-                    headsTailTab === "heads" ? "border-white border-2" : ""
+                    headsTailTab === "H" ? "border-white border-2" : ""
                   }`}
                 >
-                  {headsTailTab === "heads" && (
+                  {headsTailTab === "H" && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width={24}
@@ -533,14 +565,14 @@ const Home = () => {
                 </div>
                 <div
                   onClick={() => {
-                    setHeadsTailTab("tails");
+                    setHeadsTailTab("T");
                     setToss(null);
                   }}
                   className={`flex relative items-center justify-center flex-grow px-3 py-2 rounded-md active:scale-90 autoAnimate bg-blue-600 border-blue-600 ${
-                    headsTailTab === "tails" ? "border-white border-2" : ""
+                    headsTailTab === "T" ? "border-white border-2" : ""
                   }`}
                 >
-                  {headsTailTab === "tails" && (
+                  {headsTailTab === "T" && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width={24}
@@ -583,7 +615,7 @@ const Home = () => {
                   className="relative flex items-center flex-grow h-12 gap-1"
                 >
                   <input
-                    onChange={(e) => setStake(e.target.value)}
+                    onChange={(e) => setStake(Number(e.target.value))}
                     placeholder="Amount"
                     className="z-40 text-center input-originals"
                     type="number"
