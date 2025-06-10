@@ -90,7 +90,7 @@ const Home = () => {
           }
 
           if (toss) {
-            recentResult.push(toss);
+            recentResult.unshift(toss);
           }
 
           localStorage.setItem("recentResult", JSON.stringify(recentResult));
@@ -250,19 +250,10 @@ const Home = () => {
           </div>
         </div>
         <div id="step-gameHistory" className="w-full px-3">
-          <div className="relative w-full">
+          <div className="relative w-full flex justify-between h-full">
             <span className="absolute top-0 left-0 z-40 w-8 h-full bg-gradient-to-r to-transparent from-gray-900" />
-            {/* <div
-                      className="autoAnimate flex items-center justify-start gap-1 pr-12  scrollbar-none overflow-y-scroll  ">
-                      <span className="px-2 py-[6px] z-50"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                              strokeLinecap="round" strokeLinejoin="round" className="tabler-icon tabler-icon-history">
-                              <path d="M12 8l0 4l2 2"></path>
-                              <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"></path>
-                          </svg></span><span
-                          className="px-3 py-[6px]  rounded-md  text-sm  text-gray-600 font-semibold bg-gray-800 z-50">History
-                          will be displayed here.</span></div> */}
-            <div className="autoAnimate flex items-center justify-start gap-1 pr-12 scrollbar-none overflow-y-scroll">
+
+            <div className="autoAnimate flex items-center justify-start gap-1 pr-12 scrollbar-none overflow-y-scroll w-full ">
               <span className="px-2 py-[6px] z-50">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -291,9 +282,9 @@ const Home = () => {
                 </span>
               ))}
             </div>
-            <div className="absolute top-0 right-0 z-40 flex items-center h-full">
-              <span className="w-8 h-full bg-gradient-to-r from-transparent to-gray-900" />
-              <button className="flex items-start p-2 h-full text-xs font-medium text-center text-gray-300 bg-gray-900">
+            <div className="flex items-center h-full w-[70px]">
+              {/* <span className="w-8 h-full bg-gradient-to-r from-transparent to-gray-900" /> */}
+              <button className="flex items-center justify-center h-full  text-xs font-medium text-center text-gray-300 bg-gray-900 w-full p-1">
                 Show All
               </button>
             </div>
@@ -684,30 +675,7 @@ const Home = () => {
                 Bet
               </button>
             </div>
-            <div
-              id="step-selectMode"
-              className="relative flex w-full bg-gray-950 overflow-clip"
-            >
-              <button
-                className="flex items-center justify-center w-full gap-2 p-3 text-sm font-semibold tracking-wider text-green-500"
-                disabled
-                style={{ zIndex: 998 }}
-              >
-                Manual
-              </button>
-              <button
-                className="flex items-center justify-center w-full gap-2 p-3 text-sm font-semibold tracking-wider text-gray-400"
-                style={{ zIndex: 998 }}
-              >
-                Auto
-              </button>
-              <div
-                className="absolute z-10 h-full transition-all ease-in-out p-1 cursor-pointer"
-                style={{ zIndex: 996, width: "50%", left: "0%", bottom: "0px" }}
-              >
-                <div className="w-full h-full bg-gray-800 rounded-lg" />
-              </div>
-            </div>
+
             <div>
               <div
                 id="step-selectMode"
